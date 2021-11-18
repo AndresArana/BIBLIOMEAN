@@ -90,10 +90,10 @@ const loginC = async (req, res) => {
     return res.status(400).send({ message: "Incomplete data" });
 
   const userLoginC = await cliente.findOne({ email: req.body.email });
-  if (!userLoginC) return res.status(400).send({ message: "correo" });
+  if (!userLoginC) return res.status(400).send({ message: "Wrong email or password" });
   //compara las contraseñas para validar si son iguales
   const hash = await bcrypt.compare(req.body.password, userLoginC.password);
-  if (!hash) return res.status(400).send({ message: "contraeña" });
+  if (!hash) return res.status(400).send({ message: "Wrong email or password" });
 
   //generamos el JWT para mandar la info en json
   try {
