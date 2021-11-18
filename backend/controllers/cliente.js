@@ -20,8 +20,21 @@ const registerCliente = async (req, res) => {
   });
 
   const result = await clienteSchema.save();
-  if (!result) return res.status(400).send("failed register cliente");
-  return res.status(200).send({ result });
+
+  try {
+    return res.status(200).json({
+      token: jwt.sign(
+        {
+          _id: result._id,
+          name: result.name,
+          iat: moment().unix(),
+        },
+        process.env.SECRET_KEY_JWT
+      ),
+    });
+  } catch (error) {
+    return res.status(400).send({ message: "Register error" });
+  }
 };
 
 //listar clientes
@@ -61,6 +74,7 @@ const updateCliente = async (req, res) => {
   if (!clienteUpdate) return res.status(400).send("error digit cliente");
   return res.status(200).send({ clienteUpdate });
 };
+
 //eliminar cliente
 const deleteCliente = async (req, res) => {
   const clienteDelete = await cliente.findByIdAndDelete({
@@ -71,25 +85,23 @@ const deleteCliente = async (req, res) => {
 };
 
 //login
-const login = async (req, res) => {
+const loginC = async (req, res) => {
   if (!req.body.email || !req.body.password)
     return res.status(400).send({ message: "Incomplete data" });
 
-  const userLogin = await cliente.findOne({ email: req.body.email });
-  if (!userLogin)
-    return res.status(400).send({ message: "wrong email or password" });
+  const userLoginC = await cliente.findOne({ email: req.body.email });
+  if (!userLoginC) return res.status(400).send({ message: "correo" });
   //compara las contraseñas para validar si son iguales
-  const hash = await bcrypt.compare(req.body.password, userLogin.password);
-  if (!hash)
-    return res.status(400).send({ message: "wrong email or password" });
+  const hash = await bcrypt.compare(req.body.password, userLoginC.password);
+  if (!hash) return res.status(400).send({ message: "contraeña" });
 
   //generamos el JWT para mandar la info en json
   try {
     return res.status(200).json({
       token: jwt.sign(
         {
-          _id: userLogin._id,
-          name: userLogin.name,
+          _id: userLoginC._id,
+          name: userLoginC.name,
           iat: moment().unix(),
         },
         process.env.SECRET_KEY_JWT
@@ -104,5 +116,5 @@ export default {
   listCliente,
   updateCliente,
   deleteCliente,
-  login,
+  loginC,
 };

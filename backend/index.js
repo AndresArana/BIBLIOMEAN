@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import libro from "./routes/libro.js";
 import cliente from "./routes/cliente.js";
 import proveedor from "./routes/proveedor.js";
+import admin from "./routes/admin.js";
 dotenv.config();
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors());
 app.use("/api/libro", libro);
 app.use("/api/cliente", cliente);
 app.use("/api/proveedor", proveedor);
+app.use("/api/admin", admin);
 app.listen(process.env.PORT, () =>
   console.log("Backend server running on port: " + process.env.PORT)
 );

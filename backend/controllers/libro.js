@@ -27,11 +27,19 @@ const registerLibro = async (req, res) => {
   if (!result) return res.status(400).send("failed register libro");
   return res.status(200).send({ result });
 };
+
 const listLibro = async (req, res) => {
   const libroSchema = await libro.find();
   if (!libroSchema || libroSchema.length == 0)
     return res.status(400).send("Empty libro list");
   return res.status(200).send({ libroSchema });
+};
+//listar por id
+const findLibro = async (req, res) => {
+  const librofind = await libro.findById({ _id: req.params["_id"] });
+  return !librofind
+    ? res.status(400).send({ message: "No search results" })
+    : res.status(200).send({ userfind });
 };
 
 //actualizar libro
@@ -75,4 +83,4 @@ const deleteLibro = async (req, res) => {
   if (!libroDelete) return res.status(400).send("libro no found");
   res.status(200).send("libro deleted");
 };
-export default { registerLibro, listLibro, updateLibro, deleteLibro};
+export default { registerLibro, listLibro, updateLibro, deleteLibro, findLibro};
